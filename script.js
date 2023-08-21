@@ -40,7 +40,7 @@ function showFormFields() {
             } else if (purchaseAnnualTaxes < 1) {
                 alert("Please Enter Annual Taxes.");
                 return;
-            } else if (purchaseInterestRate < 1){
+            } else if (purchaseInterestRate < 0){
                 alert("Please Enter Annual Interest Rate.");
                 return;
             } else if (purchaseAnnualInsurance < 1) {
@@ -53,25 +53,23 @@ function showFormFields() {
             }
             // End Field Validations
 
-
-            var convertPurchaseInterest = purchaseInterestRate / 100;
+            //The Calculations
             var purchaseLoanAmount = purchasePrice - purchasedownPayment;
-            console.log(purchaseLoanAmount);
-            var purchaseMonthlyInterestRate = convertPurchaseInterest / 12;
-            console.log(purchaseMonthlyInterestRate);
+            var convertPurchaseInterest = purchaseInterestRate / 100;
+            var purchaseMonthlyInterestRate = convertPurchaseInterest / 12; // Corrected
             var purchaseNumberOfPayments = purchaseTerm * 12;
-            console.log(purchaseNumberOfPayments);
 
             var PurchaseMonthlyPayment = (purchaseLoanAmount * purchaseMonthlyInterestRate * Math.pow(1 + purchaseMonthlyInterestRate, purchaseNumberOfPayments)) /
             (Math.pow(1 + purchaseMonthlyInterestRate, purchaseNumberOfPayments) - 1);
-        
+
             var PurchaseTotalMonthlyPayment = PurchaseMonthlyPayment + (purchaseAnnualTaxes / 12) + (purchaseAnnualInsurance / 12) + purchaseMonthHoa;
             var results = PurchaseTotalMonthlyPayment.toFixed(2);
             console.log("Total Monthly Payment: $" + results);
+            //End of The Calculations
 
-    // Display results
-    var resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "<h2>Total Monthly Payment:</h2><p>$" + results + "</p>";
+            // Display results
+            var resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "<h2>Total Monthly Payment:</h2><p>$" + results + "</p>";
 
       }
       calculatePurchaseMonthly(); // Call the function
