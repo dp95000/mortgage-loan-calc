@@ -79,28 +79,50 @@ function showFormFields() {
     } else if (loanType === "refinance") {
       // CALCULATE MONTHLY PAYMENT FOR RE-FINANCE LOAN TYPE
       function calculateReFiMonthly() {
-        var marketValue = document.getElementById("marketValue").value;
-        var refinanceTerm = document.getElementById("refinanceTerm").value;
-        var refinanceAnnualTaxes = document.getElementById("refinanceAnnualTaxes").value;
-        var refinanceInterestRate = document.getElementById("refinanceInterestRate").value;
-        var refinanceAnnualInsurance = document.getElementById("refinanceAnnualInsurance").value;
-        var refinanceMonthHoa = document.getElementById("refinanceMonthHoa").value;
+        var refinanceMarketValue = parseFloat(document.getElementById("refinanceMarketValue").value);
+        var refinanceTermYears = parseInt(document.getElementById("refinanceTerm").value);
+        var refinanceMortBalance = parseFloat(document.getElementById("refinanceMortBalance").value); // Added
+        var refinanceAnnualTaxes = parseFloat(document.getElementById("refinanceAnnualTaxes").value);
+        var refinanceAnnualInsurance = parseFloat(document.getElementById("refinanceAnnualInsurance").value);
+        var refinanceInterestRate = parseFloat(document.getElementById("refinanceInterestRate").value) / 100;
+        var refinanceMonthlyHoaFees = parseFloat(document.getElementById("refinanceMonthHoa").value);
 
         // Validate all fields have been filled in
-        if (marketValue < 1) {
+        if (refinanceMarketValue < 1) {
             alert("Please Enter Market Vaule.");
         } else if (refinanceAnnualTaxes < 1) {
             alert("Please Enter Annual Taxes.");
-        } else if (refinanceInterestRate < 1){
+        } else if (refinanceInterestRate < 0){
             alert("Please Enter Annual Interest Rate.");
         } else if (refinanceAnnualInsurance < 1) {
             alert("Please Enter Annual Insurance Rate.");
         } else if (refinanceMonthHoa < 1) {
             refinanceMonthHoa === 0;
+        } else if (refinanceMortBalance < 1) {
+            alert("Please Enter Remaining Mortgage Balance.");
         } else {
             console.log(refinanceMonthHoa);
         }
         // End Field Validations
+
+        var monthlyInterestRate = refinanceInterestRate / 12;
+        var numberOfPayments = refinanceTermYears * 12;
+
+        var monthlyPayment = (refinanceMarketValue * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) /
+            (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+
+        var totalMonthlyPayment = monthlyPayment + (refinanceAnnualTaxes / 12) + (refinanceAnnualInsurance / 12) + refinanceMonthlyHoaFees;
+
+        // Calculate the difference between the new loan amount and the current mortgage balance
+        var loanDifference = refinanceMarketValue - refinanceMortBalance;
+
+        // If the loan difference is positive (increased loan amount), add it to the total monthly payment
+        if (loanDifference > 0) {
+            totalMonthlyPayment += loanDifference / numberOfPayments;
+        }
+
+        var resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = "<h2>Total Monthly Payment:</h2><p>$" + totalMonthlyPayment.toFixed(2) + "</p>";
 
       }
       calculateReFiMonthly(); // Call the function
