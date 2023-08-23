@@ -29,6 +29,7 @@ function showFormFields() {
             var purchaseInterestRate = parseFloat(document.getElementById("purchaseInterestRate").value);
             var purchaseAnnualInsurance = parseFloat(document.getElementById("purchaseAnnualInsurance").value);
             var purchaseMonthHoa = parseFloat(document.getElementById("purchaseMonthHoa").value);
+            // End Collect Field Variables
             
             // Validate all fields have been filled in
             if (purchasePrice < 1) {
@@ -79,6 +80,8 @@ function showFormFields() {
     } else if (loanType === "refinance") {
       // CALCULATE MONTHLY PAYMENT FOR RE-FINANCE LOAN TYPE
       function calculateReFiMonthly() {
+
+        // Collect Field Variables
         var refinanceMarketValue = parseFloat(document.getElementById("refinanceMarketValue").value);
         var refinanceTermYears = parseInt(document.getElementById("refinanceTerm").value);
         var refinanceMortBalance = parseFloat(document.getElementById("refinanceMortBalance").value); // Added
@@ -86,6 +89,7 @@ function showFormFields() {
         var refinanceAnnualInsurance = parseFloat(document.getElementById("refinanceAnnualInsurance").value);
         var refinanceInterestRate = parseFloat(document.getElementById("refinanceInterestRate").value) / 100;
         var refinanceMonthlyHoaFees = parseFloat(document.getElementById("refinanceMonthHoa").value);
+        // End Collect Field Variables
 
         // Validate all fields have been filled in
         if (refinanceMarketValue < 1) {
@@ -105,6 +109,7 @@ function showFormFields() {
         }
         // End Field Validations
 
+        //The Calculations
         var monthlyInterestRate = refinanceInterestRate / 12;
         var numberOfPayments = refinanceTermYears * 12;
 
@@ -115,12 +120,13 @@ function showFormFields() {
 
         // Calculate the difference between the new loan amount and the current mortgage balance
         var loanDifference = refinanceMarketValue - refinanceMortBalance;
-
         // If the loan difference is positive (increased loan amount), add it to the total monthly payment
         if (loanDifference > 0) {
             totalMonthlyPayment += loanDifference / numberOfPayments;
         }
+        //End of The Calculations
 
+        // Display results
         var resultsDiv = document.getElementById("results");
         resultsDiv.innerHTML = "<h2>Total Monthly Payment:</h2><p>$" + totalMonthlyPayment.toFixed(2) + "</p>";
 
@@ -132,13 +138,17 @@ function showFormFields() {
     } else if (loanType === "fixflip") {
       // CALCULATE MONTHLY PAYMENT FOR FIX AND FLIP LOAN TYPE
       function calculateFixFlipMonthly() {
+        
             // Collect Field Variables
-            var fixflipdownPayment = document.getElementById("fixflipdownPayment").value;
-            var fixflipTerm = document.getElementById("fixflipTerm").value;
-            var fixflipAnnualTaxes = document.getElementById("fixflipAnnualTaxes").value;
-            var fixflipInterestRate = document.getElementById("fixflipInterestRate").value;
-            var fixflipAnnualInsurance = document.getElementById("fixflipAnnualInsurance").value;
-            var fixflipMonthHoa = document.getElementById("purchaseMonthHoa").value;
+            var fixflipPurchase = parseFloat(document.getElementById("fixflipPurchase").value);
+            var fixflipRenovate = parseFloat(document.getElementById("fixflipRenovate").value);
+            var fixflipdownPayment = parseFloat(document.getElementById("fixflipdownPayment").value);
+            var fixflipTerm = parseFloat(document.getElementById("fixflipTerm").value);
+            var fixflipAnnualTaxes = parseFloat(document.getElementById("fixflipAnnualTaxes").value);
+            var fixflipInterestRate = parseFloat(document.getElementById("fixflipInterestRate").value);
+            var fixflipAnnualInsurance = parseFloat(document.getElementById("fixflipAnnualInsurance").value);
+            var fixflipMonthHoa = parseFloat(document.getElementById("fixflipMonthHoa").value);
+            // End Collect Field Variables
 
             // Validate all fields have been filled in
             if (fixflipdownPayment < 1) {
@@ -151,11 +161,27 @@ function showFormFields() {
                 alert("Please Enter Annual Insurance Rate.");
             } else if (fixflipMonthHoa < 1) {
                 fixflipMonthHoa === 0;
+            } else if (fixflipPurchase < 1) {
+                alert("Please Enter Purchase Price.");
+            } else if (fixflipRenovate < 1) {
+                alert("Please Enter Renovation Price.");
             } else {
                 console.log("fixflipMonthHoa");
             }
             // End Field Validations
 
+            //The Calculations
+            var fixflipLoanAmount = fixflipPurchase + fixflipRenovate - fixflipdownPayment;
+            var fixflipMonthlyInterestRate = fixflipInterestRate / 12;
+            var fixflipNumberOfPayments = fixflipTerm * 12;
+          
+            var fixflipMonthlyPayment = (fixflipLoanAmount * fixflipMonthlyInterestRate * Math.pow(1 + fixflipMonthlyInterestRate, fixflipNumberOfPayments)) /
+              (Math.pow(1 + fixflipMonthlyInterestRate, fixflipNumberOfPayments) - 1);
+          
+            var fixflipTotalMonthlyPayment = fixflipMonthlyPayment + (fixflipAnnualTaxes / 12) + (fixflipAnnualInsurance / 12) + fixflipMonthHoa;
+          
+            var resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "<h2>Total Monthly Payment:</h2><p>$" + fixflipTotalMonthlyPayment.toFixed(2) + "</p>";
 
       }
       calculateFixFlipMonthly(); // Call the function
